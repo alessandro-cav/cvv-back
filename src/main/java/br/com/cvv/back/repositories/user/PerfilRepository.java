@@ -22,5 +22,4 @@ public interface PerfilRepository extends PagingAndSortingRepository<Perfil, Lon
 
 	@Query("SELECT perfil FROM Perfil perfil WHERE perfil.cnpj = :cnpj and perfil.nome LIKE %:nome%")
 	List<Perfil> findByCnpjAndNomeLike(@Param("cnpj") String cnpj, @Param("nome") String nome);
-
 }
