@@ -61,14 +61,18 @@ public class PerfilService {
 		return perfilResponseDTOs;
 	}
 
-	/*
-	 * public void excluirPeloId(Long id) { this.repository.findById(id).map(perfil
-	 * -> { try {
-	 * 
-	 * this.repository.delete(perfil); } catch (DataIntegrityViolationException e) {
-	 * throw new BadRequestException("Perfil vinculado ao usuario"); } }, () -> {
-	 * throw new ObjetoNotFoundException("Perfil não encontrado."); }); }
-	 */
+	public void excluirPeloId(Long id) {
+		this.repository.findById(id).ifPresentOrElse(perfil -> {
+			try {
+
+				this.repository.delete(perfil);
+			} catch (DataIntegrityViolationException e) {
+				throw new BadRequestException("Perfil vinculado ao usuario");
+			}
+		}, () -> {
+			throw new ObjetoNotFoundException("Perfil não encontrado.");
+		});
+	}
 
 	public PerfilResponseDTO buscarPeloId(Long id) {
 		return this.repository.findById(id).map(perfil -> {
