@@ -24,10 +24,12 @@ import br.com.cvv.back.handlers.BadRequestException;
 import br.com.cvv.back.handlers.ObjetoNotFoundException;
 import br.com.cvv.back.repositories.user.UsuarioRepository;
 
+
+
 @Service
 public class UserService implements UserDetailsService {
 
-	private final br.com.cvv.back.repositories.user.UsuarioRepository repository;
+	private final UsuarioRepository repository;
 
 	private final PasswordEncoder passwordEncod;
 
@@ -51,26 +53,25 @@ public class UserService implements UserDetailsService {
 					.build();
 		}).orElseThrow(() -> new BadRequestException("Login invalido."));
 	}
-	
-	/*
-	 * public void esqueciMinhaSenha(LoginRequestDTO loginRequestDTO) {
-	 * this.repository.findByLogin(loginRequestDTO.getLogin()).ifPresentOrElse(
-	 * usuario -> {
-	 * 
-	 * String token = JWT.create().withSubject(usuario.getLogin())
-	 * .withExpiresAt(new Date(System.currentTimeMillis() +
-	 * JWTConstants.TOKEN_EXPIRADO_ESQUECI_SENHA))
-	 * .sign(Algorithm.HMAC512(JWTConstants.CHAVE_ASSINATURA));
-	 * 
-	 * String link = JWTConstants.LINK_TOKEN_RESETAR_SENHA + token;
-	 * 
-	 * //String nome = null; // rever isso aqui //nome =
-	 * this.repository.buscarNomeDoFuncionarioPeloIdUsuario(usuario.getId());
-	 * 
-	 * email.enviarEmail(usuario.getLogin(), usuario.getLogin(), link); }, () -> {
-	 * throw new BadRequestException("Login invalído."); }); }
-	 */
-	
+
+	public void esqueciMinhaSenha(LoginRequestDTO loginRequestDTO) {
+		this.repository.findByLogin(loginRequestDTO.getLogin()).ifPresentOrElse(usuario -> {
+
+			String token = JWT.create().withSubject(usuario.getLogin())
+					.withExpiresAt(new Date(System.currentTimeMillis() + JWTConstants.TOKEN_EXPIRADO_ESQUECI_SENHA))
+					.sign(Algorithm.HMAC512(JWTConstants.CHAVE_ASSINATURA));
+
+			String link = JWTConstants.LINK_TOKEN_RESETAR_SENHA + token;
+
+			// String nome = null; // rever isso aqui //nome =
+			//this.repository.buscarNomeDoFuncionarioPeloIdUsuario(usuario.getId());
+
+			email.enviarEmail(usuario.getLogin(), usuario.getLogin(), link);
+		}, () -> {
+			throw new BadRequestException("Login invalído.");
+		});
+	}
+
 	public MensagemResponseDTO resetarSenha(String token, SenhasRequestDTO senhasRequestDTO) {
 
 		try {
@@ -94,6 +95,5 @@ public class UserService implements UserDetailsService {
 			throw new TokenExpiredException("Token expirado: " + e.getMessage());
 		}
 	}
-
 
 }
