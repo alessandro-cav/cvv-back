@@ -24,16 +24,17 @@ public class UserController {
 		this.service = service;
 	}
 
-	/*
-	 * @PostMapping("/forgot_password") public ResponseEntity<Void>
-	 * esqueciMinhaSenha(@RequestBody @Valid LoginRequestDTO loginRequestDTO) {
-	 * this.service.esqueciMinhaSenha(loginRequestDTO); return
-	 * ResponseEntity.ok().build(); }
-	 * 
-	 * @PostMapping("/reset_password") public ResponseEntity<MensagemResponseDTO>
-	 * resetarSenha(@RequestParam String token,
-	 * 
-	 * @RequestBody @Valid SenhasRequestDTO senhasRequestDTO) { return
-	 * ResponseEntity.ok(this.service.resetarSenha(token, senhasRequestDTO)); }
-	 */
+	@PostMapping("/forgot_password")
+	public ResponseEntity<Void> esqueciMinhaSenha(@RequestBody @Valid LoginRequestDTO loginRequestDTO) {
+		this.service.esqueciMinhaSenha(loginRequestDTO);
+		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/reset_password")
+	public ResponseEntity<MensagemResponseDTO> resetarSenha(@RequestParam String token,
+
+			@RequestBody @Valid SenhasRequestDTO senhasRequestDTO) {
+		return ResponseEntity.ok(this.service.resetarSenha(token, senhasRequestDTO));
+	}
+
 }
