@@ -33,12 +33,12 @@ public class UserService implements UserDetailsService {
 
 	private final PasswordEncoder passwordEncod;
 
-	private final EnviaEmail email;
+	//private final EnviaEmail email;
 
-	public UserService(UsuarioRepository repository, PasswordEncoder passwordEncod, EnviaEmail email) {
+	public UserService(UsuarioRepository repository, PasswordEncoder passwordEncod/* , EnviaEmail email */) {
 		this.repository = repository;
 		this.passwordEncod = passwordEncod;
-		this.email = email;
+		//this.email = email;
 	}
 
 	public Usuario buscarUsuarioPeloLogin(String username) {
@@ -54,46 +54,49 @@ public class UserService implements UserDetailsService {
 		}).orElseThrow(() -> new BadRequestException("Login invalido."));
 	}
 
-	public void esqueciMinhaSenha(LoginRequestDTO loginRequestDTO) {
-		this.repository.findByLogin(loginRequestDTO.getLogin()).ifPresentOrElse(usuario -> {
+	/*
+	 * public void esqueciMinhaSenha(LoginRequestDTO loginRequestDTO) {
+	 * this.repository.findByLogin(loginRequestDTO.getLogin()).ifPresentOrElse(
+	 * usuario -> {
+	 * 
+	 * String token = JWT.create().withSubject(usuario.getLogin())
+	 * .withExpiresAt(new Date(System.currentTimeMillis() +
+	 * JWTConstants.TOKEN_EXPIRADO_ESQUECI_SENHA))
+	 * .sign(Algorithm.HMAC512(JWTConstants.CHAVE_ASSINATURA));
+	 * 
+	 * String link = JWTConstants.LINK_TOKEN_RESETAR_SENHA + token;
+	 * 
+	 * // String nome = null; // rever isso aqui //nome =
+	 * //this.repository.buscarNomeDoFuncionarioPeloIdUsuario(usuario.getId());
+	 * 
+	 * email.enviarEmail(usuario.getLogin(), usuario.getLogin(), link); }, () -> {
+	 * throw new BadRequestException("Login invalído."); }); }
+	 */
 
-			String token = JWT.create().withSubject(usuario.getLogin())
-					.withExpiresAt(new Date(System.currentTimeMillis() + JWTConstants.TOKEN_EXPIRADO_ESQUECI_SENHA))
-					.sign(Algorithm.HMAC512(JWTConstants.CHAVE_ASSINATURA));
-
-			String link = JWTConstants.LINK_TOKEN_RESETAR_SENHA + token;
-
-			// String nome = null; // rever isso aqui //nome =
-			//this.repository.buscarNomeDoFuncionarioPeloIdUsuario(usuario.getId());
-
-			email.enviarEmail(usuario.getLogin(), usuario.getLogin(), link);
-		}, () -> {
-			throw new BadRequestException("Login invalído.");
-		});
-	}
-
-	public MensagemResponseDTO resetarSenha(String token, SenhasRequestDTO senhasRequestDTO) {
-
-		try {
-			JWT.require(Algorithm.HMAC512(JWTConstants.CHAVE_ASSINATURA)).build().verify(token).getExpiresAt();
-
-			if (!senhasRequestDTO.getSenha01().equals(senhasRequestDTO.getSenha02())) {
-				throw new BadRequestException("Senhas diferentes");
-			}
-
-			String login = JWT.decode(token).getSubject();
-			Optional<Usuario> usuario = this.repository.findByLogin(login);
-
-			String novaSenhaCodificada = passwordEncod.encode(senhasRequestDTO.getSenha01().trim());
-			usuario.get().setPassword(novaSenhaCodificada);
-			this.repository.saveAndFlush(usuario.get());
-
-			String mensagem = "Senha alterada com sucesso.";
-			return MensagemResponseDTO.getMenssagem(mensagem);
-
-		} catch (TokenExpiredException e) {
-			throw new TokenExpiredException("Token expirado: " + e.getMessage());
-		}
-	}
+	/*
+	 * public MensagemResponseDTO resetarSenha(String token, SenhasRequestDTO
+	 * senhasRequestDTO) {
+	 * 
+	 * try {
+	 * JWT.require(Algorithm.HMAC512(JWTConstants.CHAVE_ASSINATURA)).build().verify(
+	 * token).getExpiresAt();
+	 * 
+	 * if (!senhasRequestDTO.getSenha01().equals(senhasRequestDTO.getSenha02())) {
+	 * throw new BadRequestException("Senhas diferentes"); }
+	 * 
+	 * String login = JWT.decode(token).getSubject(); Optional<Usuario> usuario =
+	 * this.repository.findByLogin(login);
+	 * 
+	 * String novaSenhaCodificada =
+	 * passwordEncod.encode(senhasRequestDTO.getSenha01().trim());
+	 * usuario.get().setPassword(novaSenhaCodificada);
+	 * this.repository.saveAndFlush(usuario.get());
+	 * 
+	 * String mensagem = "Senha alterada com sucesso."; return
+	 * MensagemResponseDTO.getMenssagem(mensagem);
+	 * 
+	 * } catch (TokenExpiredException e) { throw new
+	 * TokenExpiredException("Token expirado: " + e.getMessage()); } }
+	 */
 
 }

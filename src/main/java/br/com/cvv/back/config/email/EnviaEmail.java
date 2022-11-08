@@ -5,7 +5,7 @@ import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
-@Configuration
+//@Configuration
 public class EnviaEmail {
 
 	private final JavaMailSender javaMailSender;
